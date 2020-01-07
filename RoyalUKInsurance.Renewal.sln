@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.RoyalUkInsurance.Renewal.AppUI", "1.RoyalUkInsurance.Renewal.AppUI", "{D74EC397-2896-4D75-9283-26950A77E69C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2.RoyalUKInsurance.Renewal.RenewalServices", "2.RoyalUKInsurance.Renewal.RenewalServices", "{62E157F6-487E-4C93-A1AA-62280D86AF0C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3.RoyalUKInsurance.Renewal.CustomerServices", "3.RoyalUKInsurance.Renewal.CustomerServices", "{1298F075-8DE2-4BD7-B42A-100E592B2F8A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.RoyalUKInsurance.Renewal.Data", "4.RoyalUKInsurance.Renewal.Data", "{95CC553A-92D7-4908-B0B1-C593F2548783}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5.RoyalUKInsurance.Renewal.Tests", "5.RoyalUKInsurance.Renewal.Tests", "{413C39A2-5289-400D-96B8-566425D0D493}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalUKInsurance.Renewal.CustomerSevices", "RoyalUKInsurance.Renewal.CustomerSevices\RoyalUKInsurance.Renewal.CustomerSevices.csproj", "{1F5655FD-2FB4-44BA-A2AB-08FACA54D39E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalUKInsurance.Renewal.Data", "RoyalUKInsurance.Renewal.Data\RoyalUKInsurance.Renewal.Data.csproj", "{395143E8-3ED1-4D3F-84F7-3D937924E5E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalUKInsurance.Renewal.Tests", "RoyalUKInsurance.Renewal.Tests\RoyalUKInsurance.Renewal.Tests.csproj", "{5C01C5B7-B6DC-47DB-8779-8B520E058E01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalUKInsurance.Renewal.RenewalServices", "RoyalUKInsurance.Renewal.RenewalService\RoyalUKInsurance.Renewal.RenewalServices.csproj", "{F9A4450D-3EFE-4162-AB85-16E085E6A8D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalUKInsurance.Renewal.AppUI", "RoyalUKInsurance.Renewal.AppUI\RoyalUKInsurance.Renewal.AppUI.csproj", "{799FCEEE-A217-41CC-9A4F-4B85F11659D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1F5655FD-2FB4-44BA-A2AB-08FACA54D39E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F5655FD-2FB4-44BA-A2AB-08FACA54D39E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F5655FD-2FB4-44BA-A2AB-08FACA54D39E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F5655FD-2FB4-44BA-A2AB-08FACA54D39E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{395143E8-3ED1-4D3F-84F7-3D937924E5E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{395143E8-3ED1-4D3F-84F7-3D937924E5E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{395143E8-3ED1-4D3F-84F7-3D937924E5E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{395143E8-3ED1-4D3F-84F7-3D937924E5E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C01C5B7-B6DC-47DB-8779-8B520E058E01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C01C5B7-B6DC-47DB-8779-8B520E058E01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C01C5B7-B6DC-47DB-8779-8B520E058E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C01C5B7-B6DC-47DB-8779-8B520E058E01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9A4450D-3EFE-4162-AB85-16E085E6A8D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9A4450D-3EFE-4162-AB85-16E085E6A8D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9A4450D-3EFE-4162-AB85-16E085E6A8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9A4450D-3EFE-4162-AB85-16E085E6A8D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{799FCEEE-A217-41CC-9A4F-4B85F11659D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{799FCEEE-A217-41CC-9A4F-4B85F11659D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{799FCEEE-A217-41CC-9A4F-4B85F11659D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{799FCEEE-A217-41CC-9A4F-4B85F11659D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1F5655FD-2FB4-44BA-A2AB-08FACA54D39E} = {1298F075-8DE2-4BD7-B42A-100E592B2F8A}
+		{395143E8-3ED1-4D3F-84F7-3D937924E5E8} = {95CC553A-92D7-4908-B0B1-C593F2548783}
+		{5C01C5B7-B6DC-47DB-8779-8B520E058E01} = {413C39A2-5289-400D-96B8-566425D0D493}
+		{F9A4450D-3EFE-4162-AB85-16E085E6A8D4} = {62E157F6-487E-4C93-A1AA-62280D86AF0C}
+		{799FCEEE-A217-41CC-9A4F-4B85F11659D1} = {D74EC397-2896-4D75-9283-26950A77E69C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29A69B84-2A10-44D9-99D1-F59FB9A0CF1D}
+	EndGlobalSection
+EndGlobal

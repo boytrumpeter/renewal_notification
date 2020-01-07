@@ -1,0 +1,22 @@
+﻿<Window x:Class="RoyalUKInsurance.Renewal.AppUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RoyalUKInsurance.Renewal.AppUI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Background="Beige">
+    <Grid>
+        <Label Content="Renewal Invitation Letter Builder " HorizontalAlignment="Center" Margin="0,44,0,0" VerticalAlignment="Top" Height="46" Width="332" FontWeight="Bold" FontSize="20"/>
+        <Label Content="Select Customer File (csv)" HorizontalAlignment="Left" Margin="79,117,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.186,1.394" Width="165"/>
+        <Label Content="Output Directory" HorizontalAlignment="Left" Margin="79,0,0,0" VerticalAlignment="Center"/>
+        <Button x:Name="btnOutputPath" Content="Open File" HorizontalAlignment="Left" Margin="572,118,0,0" VerticalAlignment="Top" Click="Button_Click" Height="23" Width="89"/>
+        <!--<Button x:Name="btnInputPath" Content="Output Location" HorizontalAlignment="Left" Margin="572,0,0,0" VerticalAlignment="Center" Click="btnInputPath_Click"/>-->
+        <TextBox x:Name="txtInputPath" HorizontalAlignment="Left" Margin="235,121,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="318" IsEnabled="False" />
+        <TextBox x:Name="txtOutputPath" HorizontalAlignment="Left" Margin="235,0,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Center" Width="318" IsEnabled="False"/>
+        <Label x:Name="lblDefaultOutputPath" Content="(Default Output Path Location)" HorizontalAlignment="Left" Margin="46,143,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblDefaultInputPath" Content="(Default Input Path Location)" HorizontalAlignment="Left" Margin="46,226,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnSubmit" Content="Generate Letters" HorizontalAlignment="Left" Margin="240,272,0,0" VerticalAlignment="Top" Width="313" Click="btnSubmit_Click" IsEnabled="False"/>
+        <Label x:Name="lblResult" Content="" HorizontalAlignment="Left" Margin="58,310,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
