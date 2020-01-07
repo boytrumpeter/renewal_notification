@@ -10,7 +10,13 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
 {
     internal class RenewalMessageGenerator
     {
-
+        /// <summary>
+        /// Internal method to Create a message from template
+        /// </summary>
+        /// <param name="customerModel">CustomerModel</param>
+        /// <param name="outputPath">outputPath</param>
+        /// <param name="templatePath">templatePath</param>
+        /// <returns></returns>
         internal bool CreateRenewalMessage(CustomerModel customerModel, string outputPath, string templatePath)
         {
             try

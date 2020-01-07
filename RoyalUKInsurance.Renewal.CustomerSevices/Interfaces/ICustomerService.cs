@@ -7,6 +7,6 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.Interfaces
 {
     public interface ICustomerService
     {
-        Task<string> GenerateRenewalMessage(string inputPath, string outputPath, string templatePath);
+        string GenerateRenewalMessage(string inputPath, string outputPath, string templatePath);
     }
 }

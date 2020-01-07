@@ -85,8 +85,9 @@ namespace RoyalUKInsurance.Renewal.AppUI
         {
             try
             {
-                lblResult.Content = _renewalMessageService.GenerateRenewalMessage(txtInputPath.Text, txtOutputPath.Text, templatePath).Result;
-                _logger.LogInformation($"Files created :{lblResult.Content}");
+                var result =  _renewalMessageService.GenerateRenewalMessage(txtInputPath.Text, txtOutputPath.Text, templatePath);
+                lblResult.Content = result;
+                _logger.LogInformation($"Files created : {result}");
                 btnSubmit.IsEnabled = false;
             }
             catch (Exception ex)

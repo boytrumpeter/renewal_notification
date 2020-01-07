@@ -71,7 +71,7 @@ namespace RoyalUKInsurance.Renewal.Tests
         public void CustomerService_MessageGenerator_Test()
         {
             var customerService = new CustomerService(new NullLogger<CustomerService>());
-            var result = customerService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath).Result;
+            var result = customerService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
         }
@@ -79,7 +79,34 @@ namespace RoyalUKInsurance.Renewal.Tests
         public void RenewalService_MessageGenerator_Test()
         {
             var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
-            var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath).Result;
+            var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(string));
+        }
+        [TestMethod]
+        public void FetchWrongCSVTest()
+        {
+            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\wrong.csv";
+            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(string));
+        }
+        [TestMethod]
+        public void FetchCSVWithMissingData_Test()
+        {
+            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\CustomerWrongTestData.csv";
+            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(string));
+        }
+        [TestMethod]
+        public void BulkData_Test()
+        {
+            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\BulkData.csv";
+            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
         }

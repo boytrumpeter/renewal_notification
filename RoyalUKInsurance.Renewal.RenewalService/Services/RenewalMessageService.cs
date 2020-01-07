@@ -8,21 +8,39 @@ using System.Threading.Tasks;
 
 namespace RoyalUKInsurance.Renewal.RenewalServices.Services
 {
+    /// <summary>
+    /// Main service which can be used from any from end.
+    /// </summary>
     public class RenewalMessageService: IRenewalMessageService
     {
+        #region Readonlymembers
         private readonly ICustomerService _customerService;
         private readonly ILogger<RenewalMessageService> _logger;
-
+        #endregion
+        #region Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="customerService">Application service</param>
+        /// <param name="logger">Logger</param>
         public RenewalMessageService(ICustomerService customerService, ILogger<RenewalMessageService> logger)
         {
             _customerService = customerService;
             _logger = logger;
         }
-        public async Task<string> GenerateRenewalMessage(string inputPath, string outputPath, string templatePath)
+        #endregion
+        /// <summary>
+        /// Implementation
+        /// </summary>
+        /// <param name="inputPath">Inputpath</param>
+        /// <param name="outputPath">putputpath</param>
+        /// <param name="templatePath">template path</param>
+        /// <returns></returns>
+        public string GenerateRenewalMessage(string inputPath, string outputPath, string templatePath)
         {
             try
             {
-                return await _customerService.GenerateRenewalMessage(inputPath, outputPath, templatePath);
+                return _customerService.GenerateRenewalMessage(inputPath, outputPath, templatePath);
             }
             catch (Exception e)
             {
