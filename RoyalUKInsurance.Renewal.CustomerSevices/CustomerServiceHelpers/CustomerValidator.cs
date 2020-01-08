@@ -33,36 +33,12 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
         /// Validate customer name
         /// </summary>
         /// <param name="customer">Customer</param>
-        public bool ValidateCustomerName(Customer customer)
-        {
-            if(ValidateCustomerForNull(customer))
-            {
-                if (customer.FirstName == null && customer.Surname == null)
-                    return false;
-            }
-            else
-            {
-                return false;
-            }
-            return true;
-        }
-        /// <summary>
-        /// All customer validations
-        /// </summary>
-        /// <param name="customer">Customer</param>
         public bool IsValidated(Customer customer)
         {
-            try
-            {
-                if (ValidateCustomerForNull(customer) && ValidateCustomerName(customer))
-                    return true;
+            if(ValidateCustomerForNull(customer))
+                return !(string.IsNullOrEmpty(customer.FirstName) && string.IsNullOrEmpty(customer.Surname));
+            else
                 return false;
-
-            }
-            catch (Exception)
-            {
-                throw new Exception("Customer validation failed");
-            }
         }
         #endregion
     }

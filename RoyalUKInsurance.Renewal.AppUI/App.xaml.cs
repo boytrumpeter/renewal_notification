@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices;
 using RoyalUKInsurance.Renewal.CustomerSevices.Interfaces;
+using RoyalUKInsurance.Renewal.Data;
 using RoyalUKInsurance.Renewal.RenewalServices.Services;
 using RoyalUKInsurance.Renewal.RenewalServices.Services.Interfaces;
 using Serilog;
@@ -51,7 +52,8 @@ namespace RoyalUKInsurance.Renewal.AppUI
         private void ConfigureServices(ServiceCollection serviceCollection )
         {
             serviceCollection.AddScoped<IRenewalMessageService, RenewalMessageService>();
-            serviceCollection.AddScoped<ICustomerService, CustomerService>(); 
+            serviceCollection.AddScoped<ICustomerService, CustomerService>();
+            serviceCollection.AddScoped<ICustomerRepository,CustomerRepository>();
             serviceCollection.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
            
             serviceCollection.AddSingleton<MainWindow>();

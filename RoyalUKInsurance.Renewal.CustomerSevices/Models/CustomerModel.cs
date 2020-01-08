@@ -23,6 +23,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.Models
         public CustomerModel(Customer customer)
         {
             Customer = customer;
+            //Default Credit card charge
             SetCreditChargeRate(5);
         }
         #endregion

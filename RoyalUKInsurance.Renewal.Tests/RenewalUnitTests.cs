@@ -5,6 +5,7 @@ using Moq;
 using RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers;
 using RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices;
 using RoyalUKInsurance.Renewal.CustomerSevices.Models;
+using RoyalUKInsurance.Renewal.Data;
 using RoyalUKInsurance.Renewal.Data.Models;
 using RoyalUKInsurance.Renewal.RenewalServices.Services;
 using System;
@@ -22,6 +23,9 @@ namespace RoyalUKInsurance.Renewal.Tests
         string InputPath;
         string OutputPath;
         IList<Customer> Customers;
+
+        public Mock<ICustomerRepository> MockCustomerRepository { get; private set; }
+
         [TestInitialize]
         public void Initialize()
         {
@@ -29,6 +33,9 @@ namespace RoyalUKInsurance.Renewal.Tests
             OutputPath = $"{GetApplicationRoot()}\\Imports";
             TemplatePath = $"{GetApplicationRoot()}\\TestData\\tt.txt";
             Customers = GetCustomerList();
+            MockCustomerRepository = new Mock<ICustomerRepository>();
+            MockCustomerRepository.Setup(a => a.GetCustomers(It.IsAny<string>()))
+                .Returns(GetCustomers(InputPath));
         }
         IList<Customer> GetCustomerList()
         {
@@ -52,21 +59,22 @@ namespace RoyalUKInsurance.Renewal.Tests
             var customer = Customers.FirstOrDefault();
             var customerModel = new CustomerModel(customer);
             var outputPath = $"{OutputPath}\\{customerModel.Customer.FirstName}_{customerModel.Customer.ID}.txt";
-            var result = new RenewalMessageGenerator().CreateRenewalMessage(customerModel, outputPath, TemplatePath);
+            var result = new MessageBuilder().BuildMessage(customerModel, outputPath, TemplatePath);
             Assert.IsTrue(result);
         }
         [TestMethod]
         public void CustomerService_MessageGenerator_Test()
         {
-            var customerService = new CustomerService(new NullLogger<CustomerService>());
-            var result = customerService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
+            
+            var customerService = new CustomerService(MockCustomerRepository.Object,new NullLogger<CustomerService>());
+            var result = customerService.BuildRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
         }
         [TestMethod]
         public void RenewalService_MessageGenerator_Test()
         {
-            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            var renewalService = new RenewalMessageService(new CustomerService(MockCustomerRepository.Object, new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
@@ -75,16 +83,21 @@ namespace RoyalUKInsurance.Renewal.Tests
         public void FetchWrongCSVTest()
         {
             InputPath = $"{GetApplicationRoot()}\\TestData\\wrong.csv";
-            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            MockCustomerRepository.Setup(a => a.GetCustomers(InputPath))
+                .Returns(GetCustomers(InputPath));
+            var renewalService = new RenewalMessageService(new CustomerService(MockCustomerRepository.Object, new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
+            Assert.AreEqual("0 renewal letter generated...", result);
         }
         [TestMethod]
         public void FetchCSVWithMissingData_Test()
         {
             InputPath = $"{GetApplicationRoot()}\\TestData\\CustomerWrongTestData.csv";
-            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            MockCustomerRepository.Setup(a => a.GetCustomers(It.IsAny<string>()))
+                .Returns(GetCustomers(InputPath));
+            var renewalService = new RenewalMessageService(new CustomerService(MockCustomerRepository.Object, new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
@@ -93,7 +106,9 @@ namespace RoyalUKInsurance.Renewal.Tests
         public void BulkData_Test()
         {
             InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\BulkData.csv";
-            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            MockCustomerRepository.Setup(a => a.GetCustomers(It.IsAny<string>()))
+                .Returns(GetCustomers(InputPath));
+            var renewalService = new RenewalMessageService(new CustomerService(MockCustomerRepository.Object,new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
@@ -102,12 +117,18 @@ namespace RoyalUKInsurance.Renewal.Tests
         public void CustomerNameNullTest()
         {
             InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\CustomerNameNull.csv";
-            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            MockCustomerRepository.Setup(a => a.GetCustomers(It.IsAny<string>()))
+                .Returns(GetCustomers(InputPath));
+            var renewalService = new RenewalMessageService(new CustomerService(MockCustomerRepository.Object,new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
         }
 
+        /// <summary>
+        /// Get application root path
+        /// </summary>
+        /// <returns></returns>
         string GetApplicationRoot()
         {
             var exePath = System.IO.Path.GetDirectoryName(System.Reflection
@@ -115,6 +136,22 @@ namespace RoyalUKInsurance.Renewal.Tests
             Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
             var appRoot = appPathMatcher.Match(exePath).Value;
             return appRoot;
+        }
+
+        /// <summary>
+        /// Get customers
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        IList<Customer> GetCustomers(string path)
+        {
+            using (var reader = new StreamReader(path))
+            using (var csvReader = new CsvReader(reader))
+            {
+                //Fetching customer records
+                var customers = csvReader.GetRecords<Customer>();
+                return customers.ToList();
+            }
         }
     }
 }

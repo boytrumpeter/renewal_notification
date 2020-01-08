@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers;
 using RoyalUKInsurance.Renewal.CustomerSevices.Interfaces;
 using RoyalUKInsurance.Renewal.CustomerSevices.Models;
+using RoyalUKInsurance.Renewal.Data;
 using RoyalUKInsurance.Renewal.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -17,22 +18,27 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
     {
         #region ReadonlyMembers
         private readonly ILogger<CustomerService> _logger;
+        private readonly ICustomerRepository _customerRepository;
         private readonly CustomerValidator _customerValidator;
-        private readonly RenewalMessageGenerator _renewalMessageGenerator;
+        private readonly MessageBuilder _renewalMessageGenerator;
         #endregion
         #region Constructors
         /// <summary>
         /// Public constructor
         /// </summary>
         /// <param name="logger">Logger</param>
-        public CustomerService(ILogger<CustomerService> logger) : this(new CustomerValidator(), new RenewalMessageGenerator()) { _logger = logger; }
+        public CustomerService(ICustomerRepository customerRepository, ILogger<CustomerService> logger) : this(new CustomerValidator(), new MessageBuilder())
+        {
+            _logger = logger;
+            _customerRepository = customerRepository;
+        }
         /// <summary>
         /// Internal Constructor (We can use factory pattern here )
         /// </summary>
         /// <param name="customerValidator"> Customer Validator</param>
         /// <param name="paymentsCalculator">Payments Calculator</param>
         /// <param name="renewalMessageGenerator">RenewalMessageGenerator</param>
-        internal CustomerService(CustomerValidator customerValidator, RenewalMessageGenerator renewalMessageGenerator)
+        internal CustomerService(CustomerValidator customerValidator, MessageBuilder renewalMessageGenerator)
         {
             _customerValidator = customerValidator;
             _renewalMessageGenerator = renewalMessageGenerator;
@@ -46,55 +52,45 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         /// <param name="outputPath">output path</param>
         /// <param name="templatePath">template file path</param>
         /// <returns></returns>
-        public string GenerateRenewalMessage(string inputPath, string outputPath, string templatePath)
+        public string BuildRenewalMessage(string inputPath, string outputPath, string templatePath)
         {
-            try
-            {
-                int success = 0;
-                using (var reader = new StreamReader(inputPath))
-                using (var csvReader = new CsvReader(reader))
-                {
-                    //Fetching customer records
-                    var customers = csvReader.GetRecords<Customer>();
-                    //Generating letter for each customer
-                    Parallel.ForEach(customers, (customer) =>
-                    {
-                        try
-                        {
-                            if (_customerValidator.IsValidated(customer))
-                            {
-                                _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer validated.");
 
-                                var customerModel = new CustomerModel(customer);
-                                var _outputPath = $"{outputPath}\\{customerModel.Customer.ID}_{customerModel.Customer.FirstName}.txt";
-                                if (!File.Exists(_outputPath))
-                                {
-                                    //Creating message using template and storing. Return true if succeeded else false
-                                    if (_renewalMessageGenerator.CreateRenewalMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
-                                    {
-                                        success++;
-                                        _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer message generated.");
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                _logger.LogWarning($"Customer validation failed.");
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.LogError($"Error in customer service: {e.Message}");
-                        }
-                    });
-                }
-                return $"{success} renewal letter generated...";
-            }
-            catch (Exception e)
+            int success = 0;
+            //Fetching customer records
+            var customers = _customerRepository.GetCustomers(inputPath);
+            //Generating letter for each customer
+            Parallel.ForEach(customers, (customer) =>
             {
-                _logger.LogError($"{e.Message}");
-                return $"{e.Message}";
-            }
+                try
+                {
+                    if (_customerValidator.IsValidated(customer))
+                    {
+                        _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer validated.");
+
+                        var customerModel = new CustomerModel(customer);
+                        var _outputPath = $"{outputPath}\\{customerModel.Customer.ID}_{customerModel.Customer.FirstName}.txt";
+                        if (!File.Exists(_outputPath))
+                        {
+                                    //Creating message using template and storing. Return true if succeeded else false
+                                    if (_renewalMessageGenerator.BuildMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
+                            {
+                                success++;
+                                _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer message generated.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Customer validation failed.");
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"Error in customer service: {e.Message}");
+                }
+            });
+
+            return $"{success} renewal letter generated...";
         }
         #endregion
     }

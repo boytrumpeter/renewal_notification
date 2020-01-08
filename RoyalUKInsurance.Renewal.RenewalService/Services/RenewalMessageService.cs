@@ -40,12 +40,12 @@ namespace RoyalUKInsurance.Renewal.RenewalServices.Services
         {
             try
             {
-                return _customerService.GenerateRenewalMessage(inputPath, outputPath, templatePath);
+                return _customerService.BuildRenewalMessage(inputPath, outputPath, templatePath);
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
-                throw;
+                _logger.LogError($"Error occured in process, {e.Message}");
+                return $"Error occured in process, please see errors in logs.";
             }
 
         }

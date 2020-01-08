@@ -8,25 +8,26 @@ using System.Threading.Tasks;
 
 namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
 {
-    internal class RenewalMessageGenerator
+    internal class MessageBuilder
     {
         const string err = "error";
         /// <summary>
-        /// Internal method to Create a message from template
+        /// Internal method to Create a message/letter from template
         /// </summary>
         /// <param name="customerModel">CustomerModel</param>
         /// <param name="outputPath">outputPath</param>
         /// <param name="templatePath">templatePath</param>
         /// <returns></returns>
-        internal bool CreateRenewalMessage(CustomerModel customerModel, string outputPath, string templatePath)
+        internal bool BuildMessage(CustomerModel customerModel, string outputPath, string templatePath)
         {
             try
             {
-                var templateData = ReadTemplate(templatePath);
-                var completedTemplate = SearchAndReplace(customerModel, templateData);
-                if (completedTemplate != err)
-                    return WriteCompletedTemplate(completedTemplate, outputPath);
-                return false;
+                var templateData = Utilities.ReadFile(templatePath);
+                var message = SearchAndReplace(customerModel, templateData);
+                if (message == err)
+                    return false;
+                Utilities.WriteToFile(message, outputPath);
+                return true;
             }
             catch (Exception)
             {
@@ -35,23 +36,6 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
 
         }
         #region PrivateMethods
-        /// <summary>
-        /// Read the contents in letter template
-        /// </summary>
-        /// <param name="templatePath"></param>
-        /// <returns>Task<string> of contents in template</returns>
-        string ReadTemplate(string templatePath)
-        {
-            using (StreamReader reader = new StreamReader(templatePath, Encoding.GetEncoding("iso-8859-1")))
-            {
-                var task = Task.Run(async () =>
-                {
-                    return await reader.ReadToEndAsync();
-                });
-                task.Wait();
-                return task.Result;
-            }
-        }
         /// <summary>
         /// Search and replace the values in the temlate for individual customer
         /// </summary>
@@ -81,7 +65,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
                     };
                     return re.Replace(content, match => { return replacements.ContainsKey(match.Groups[1].Value) ? replacements[match.Groups[1].Value] : match.Value; });
                 });
-                
+                task.Wait();
                 return task.Result;
             }
             catch (Exception e)
@@ -90,31 +74,6 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
             }
 
         }
-        /// <summary>
-        /// Method to write the completed file to destination path.
-        /// </summary>
-        /// <param name="content"></param>
-        /// <param name="outputPath"></param>
-        /// <returns>Bool</returns>
-        bool WriteCompletedTemplate(string content, string outputPath)
-        {
-            try
-            {
-                using (StreamWriter wr = new StreamWriter(outputPath, true, Encoding.GetEncoding("iso-8859-1")))
-                {
-                    var task = Task.Run(async () => { await wr.WriteAsync(content); });
-                    task.Wait();
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-
-        }
-
         #endregion
     }
 }
