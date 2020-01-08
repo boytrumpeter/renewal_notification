@@ -46,10 +46,6 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         /// <param name="outputPath">output path</param>
         /// <param name="templatePath">template file path</param>
         /// <returns></returns>
-
-
-        #endregion
-
         public string GenerateRenewalMessage(string inputPath, string outputPath, string templatePath)
         {
             try
@@ -100,5 +96,6 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                 return $"{e.Message}";
             }
         }
+        #endregion
     }
 }

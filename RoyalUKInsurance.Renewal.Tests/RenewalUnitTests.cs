@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace RoyalUKInsurance.Renewal.Tests
 {
@@ -24,9 +25,9 @@ namespace RoyalUKInsurance.Renewal.Tests
         [TestInitialize]
         public void Initialize()
         {
-            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\CustomerTestData.csv";
-            OutputPath = $"{Directory.GetCurrentDirectory()}\\TestData";
-            TemplatePath = $"{Directory.GetCurrentDirectory()}\\TestData\\tt.txt";
+            InputPath = $"{GetApplicationRoot()}\\TestData\\CustomerTestData.csv";
+            OutputPath = $"{GetApplicationRoot()}\\Imports";
+            TemplatePath = $"{GetApplicationRoot()}\\TestData\\tt.txt";
             Customers = GetCustomerList();
         }
         IList<Customer> GetCustomerList()
@@ -73,7 +74,7 @@ namespace RoyalUKInsurance.Renewal.Tests
         [TestMethod]
         public void FetchWrongCSVTest()
         {
-            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\wrong.csv";
+            InputPath = $"{GetApplicationRoot()}\\TestData\\wrong.csv";
             var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
@@ -82,7 +83,7 @@ namespace RoyalUKInsurance.Renewal.Tests
         [TestMethod]
         public void FetchCSVWithMissingData_Test()
         {
-            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\CustomerWrongTestData.csv";
+            InputPath = $"{GetApplicationRoot()}\\TestData\\CustomerWrongTestData.csv";
             var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
@@ -105,6 +106,15 @@ namespace RoyalUKInsurance.Renewal.Tests
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
+        }
+
+        string GetApplicationRoot()
+        {
+            var exePath = System.IO.Path.GetDirectoryName(System.Reflection
+                              .Assembly.GetExecutingAssembly().CodeBase);
+            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+            var appRoot = appPathMatcher.Match(exePath).Value;
+            return appRoot;
         }
     }
 }
