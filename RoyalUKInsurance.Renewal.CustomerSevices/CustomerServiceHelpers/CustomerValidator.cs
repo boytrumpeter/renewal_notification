@@ -22,33 +22,42 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
         /// Verify the customer object is not null.
         /// </summary>
         /// <param name="customer">Customer data object</param>
-        public void ValidateCustomerForNull(Customer customer)
+        public bool ValidateCustomerForNull(Customer customer)
         {
             if (customer == null)
-                throw new NullReferenceException("Customer reference is null");
+                return false;
+            return true;
+
         }
         /// <summary>
         /// Validate customer name
         /// </summary>
         /// <param name="customer">Customer</param>
-        public void ValidateCustomerName(Customer customer)
+        public bool ValidateCustomerName(Customer customer)
         {
-            if(customer!=null)
+            if(ValidateCustomerForNull(customer))
             {
                 if (customer.FirstName == null && customer.Surname == null)
-                    throw new Exception("Customer name not exists");
+                    return false;
             }
+            else
+            {
+                return false;
+            }
+            return true;
         }
         /// <summary>
         /// All customer validations
         /// </summary>
         /// <param name="customer">Customer</param>
-        public void ValidateCustomer(Customer customer)
+        public bool IsValidated(Customer customer)
         {
             try
             {
-                ValidateCustomerForNull(customer);
-                ValidateCustomerName(customer);
+                if (ValidateCustomerForNull(customer) && ValidateCustomerName(customer))
+                    return true;
+                return false;
+
             }
             catch (Exception)
             {

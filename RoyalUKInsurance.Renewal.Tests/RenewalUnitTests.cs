@@ -110,5 +110,14 @@ namespace RoyalUKInsurance.Renewal.Tests
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
         }
+        [TestMethod]
+        public void CustomerNameNullTest()
+        {
+            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\CustomerNameNull.csv";
+            var renewalService = new RenewalMessageService(new CustomerService(new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());
+            var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(string));
+        }
     }
 }

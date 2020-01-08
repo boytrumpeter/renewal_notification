@@ -71,16 +71,23 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                     {
                         try
                         {
-                            _customerValidator.ValidateCustomer(customer);
-                            var customerModel = _paymentsCalculator.CalculatePayments(customer).Result;
-                            if (customerModel != null)
+                            if (_customerValidator.IsValidated(customer))
                             {
-                                var _outputPath = $"{outputPath}\\{customerModel.Customer.ID}_{customerModel.Customer.FirstName}.txt";
-                                if (!File.Exists(_outputPath))
+                                _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer validated.");
+                                var customerModel = _paymentsCalculator.CalculatePayments(customer).Result;
+                                if (customerModel != null)
                                 {
+                                    var _outputPath = $"{outputPath}\\{customerModel.Customer.ID}_{customerModel.Customer.FirstName}.txt";
+                                    if (!File.Exists(_outputPath))
+                                    {
                                         if (_renewalMessageGenerator.CreateRenewalMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
                                             success++;
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                _logger.LogWarning($"Customer validation failed.");
                             }
                         }
                         catch (Exception e)
