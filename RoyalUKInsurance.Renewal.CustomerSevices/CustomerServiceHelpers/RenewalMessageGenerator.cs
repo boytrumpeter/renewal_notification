@@ -10,6 +10,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
 {
     internal class RenewalMessageGenerator
     {
+        const string err = "error";
         /// <summary>
         /// Internal method to Create a message from template
         /// </summary>
@@ -21,16 +22,15 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
         {
             try
             {
-                    var templateData = ReadTemplate(templatePath);
-                    var completedTemplate = SearchAndReplace(customerModel, templateData);
-                    var IsWritten = WriteCompletedTemplate(completedTemplate, outputPath);
-                return IsWritten;
-                
+                var templateData = ReadTemplate(templatePath);
+                var completedTemplate = SearchAndReplace(customerModel, templateData);
+                if (completedTemplate != err)
+                    return WriteCompletedTemplate(completedTemplate, outputPath);
+                return false;
             }
             catch (Exception)
             {
                 return false;
-
             }
 
         }
@@ -62,7 +62,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
         {
             try
             {
-                var task = Task.Run(async () =>
+                var task = Task.Run(() =>
                 {
                     Regex re = new Regex(@"\$(\w+)\$", RegexOptions.Compiled);
                     var replacements = new Dictionary<string, string>()
@@ -81,14 +81,14 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
                     };
                     return re.Replace(content, match => { return replacements.ContainsKey(match.Groups[1].Value) ? replacements[match.Groups[1].Value] : match.Value; });
                 });
-                task.Wait();
+                //task.Wait();
                 return task.Result;
             }
             catch (Exception e)
             {
-                throw;
+                return err;
             }
-            
+
         }
         /// <summary>
         /// Method to write the completed file to destination path.
@@ -111,8 +111,8 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
             {
                 return false;
             }
-           
-            
+
+
         }
 
         #endregion

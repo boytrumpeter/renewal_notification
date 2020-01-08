@@ -42,28 +42,15 @@ namespace RoyalUKInsurance.Renewal.Tests
         public void CustomerValidator_NullReferenceException_Test()
         {
             var validator = new CustomerValidator();
-            Assert.ThrowsException<NullReferenceException>(() => validator.ValidateCustomerForNull(null));
+            Assert.IsFalse(validator.IsValidated(null));
         }
 
-        [TestMethod]
-        public void PaymentsCalculator_Test()
-        {
-            var paymentCalculator = new PaymentsCalculator();
-            var customer = Customers.FirstOrDefault();
-            var result = paymentCalculator.CalculatePayments(customer).Result;
-            Assert.IsInstanceOfType(result, typeof(CustomerModel));
-            Assert.AreEqual(expected: (decimal)6.17, actual: result.CreditCharge, "CreditCharge");
-            Assert.AreEqual(expected: (decimal)10.82, actual: result.InitialPayment, "InitialPayment");
-            Assert.AreEqual(expected: (decimal)10.80, actual: result.OtherMonthlyPayment, "OtherMOnthlyPayment");
-            Assert.AreEqual(expected: (decimal)129.62, actual: result.TotalPremium, "TotalPremium");
-            Assert.IsTrue(result.InitialPayment > result.OtherMonthlyPayment, "Initial payment must be always greater or equal to other monthly payments");
-        }
         [TestMethod]
         public void RenewalMessageGenerator_Test()
         {
             var customer = Customers.FirstOrDefault();
-            var customerModel = new PaymentsCalculator().CalculatePayments(customer).Result;
-            var outputPath = $"{OutputPath}\\{customerModel.Customer.FirstName}{customerModel.Customer.ID}.txt";
+            var customerModel = new CustomerModel(customer);
+            var outputPath = $"{OutputPath}\\{customerModel.Customer.FirstName}_{customerModel.Customer.ID}.txt";
             var result = new RenewalMessageGenerator().CreateRenewalMessage(customerModel, outputPath, TemplatePath);
             Assert.IsTrue(result);
         }

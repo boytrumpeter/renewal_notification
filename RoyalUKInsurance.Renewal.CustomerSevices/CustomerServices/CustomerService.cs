@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers;
 using RoyalUKInsurance.Renewal.CustomerSevices.Interfaces;
+using RoyalUKInsurance.Renewal.CustomerSevices.Models;
 using RoyalUKInsurance.Renewal.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,6 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         #region ReadonlyMembers
         private readonly ILogger<CustomerService> _logger;
         private readonly CustomerValidator _customerValidator;
-        private readonly PaymentsCalculator _paymentsCalculator;
         private readonly RenewalMessageGenerator _renewalMessageGenerator;
         #endregion
         #region Constructors
@@ -25,17 +25,16 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         /// Public constructor
         /// </summary>
         /// <param name="logger">Logger</param>
-        public CustomerService(ILogger<CustomerService> logger) : this(new CustomerValidator(), new PaymentsCalculator(), new RenewalMessageGenerator()) { _logger = logger; }
+        public CustomerService(ILogger<CustomerService> logger) : this(new CustomerValidator(), new RenewalMessageGenerator()) { _logger = logger; }
         /// <summary>
         /// Internal Constructor (We can use factory pattern here )
         /// </summary>
         /// <param name="customerValidator"> Customer Validator</param>
         /// <param name="paymentsCalculator">Payments Calculator</param>
         /// <param name="renewalMessageGenerator">RenewalMessageGenerator</param>
-        internal CustomerService(CustomerValidator customerValidator, PaymentsCalculator paymentsCalculator, RenewalMessageGenerator renewalMessageGenerator)
+        internal CustomerService(CustomerValidator customerValidator, RenewalMessageGenerator renewalMessageGenerator)
         {
             _customerValidator = customerValidator;
-            _paymentsCalculator = paymentsCalculator;
             _renewalMessageGenerator = renewalMessageGenerator;
         }
         #endregion
@@ -47,7 +46,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         /// <param name="outputPath">output path</param>
         /// <param name="templatePath">template file path</param>
         /// <returns></returns>
-     
+
 
         #endregion
 
@@ -58,15 +57,10 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                 var tokenSource = new CancellationTokenSource();
                 var token = tokenSource.Token;
                 int success = 0;
-
-                Object obj = new Object();
-                IDictionary<int, string> results = new Dictionary<int, string>();
-
                 using (var reader = new StreamReader(inputPath))
                 using (var csvReader = new CsvReader(reader))
                 {
                     var customers = csvReader.GetRecords<Customer>();
-
                     Parallel.ForEach(customers, (customer) =>
                     {
                         try
@@ -74,14 +68,15 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                             if (_customerValidator.IsValidated(customer))
                             {
                                 _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer validated.");
-                                var customerModel = _paymentsCalculator.CalculatePayments(customer).Result;
-                                if (customerModel != null)
+
+                                var customerModel = new CustomerModel(customer);
+                                var _outputPath = $"{outputPath}\\{customerModel.Customer.ID}_{customerModel.Customer.FirstName}.txt";
+                                if (!File.Exists(_outputPath))
                                 {
-                                    var _outputPath = $"{outputPath}\\{customerModel.Customer.ID}_{customerModel.Customer.FirstName}.txt";
-                                    if (!File.Exists(_outputPath))
+                                    if (_renewalMessageGenerator.CreateRenewalMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
                                     {
-                                        if (_renewalMessageGenerator.CreateRenewalMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
-                                            success++;
+                                        success++;
+                                        _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer message generated.");
                                     }
                                 }
                             }

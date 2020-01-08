@@ -10,29 +10,60 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.Models
     /// </summary>
     public class CustomerModel
     {
-        #region Readonly Members
-        public readonly Customer Customer;
-        public readonly decimal CreditCharge;
-        public readonly decimal InitialPayment;
-        public readonly decimal OtherMonthlyPayment;
-        public readonly decimal TotalPremium;
+        #region Properties
+        //public readonly Customer Customer;
+        public decimal CreditCharge { get; private set; }
+        public decimal InitialPayment { get { return GetMonthlypayments().Item1; } }
+        public decimal OtherMonthlyPayment { get { return GetMonthlypayments().Item2; } }
+        public decimal TotalPremium { get { return GetTotalPremium(); } }
+        public int CreditChargeRate { get; private set; }
+        public Customer Customer { get; }
         #endregion
         #region Constructor
-        /// <summary>
-        /// Constrcutor
-        /// </summary>
-        /// <param name="customer">Customer Domain object</param>
-        /// <param name="creditCharge">Credit Charge Amount</param>
-        /// <param name="initialPayment">First installment payment</param>
-        /// <param name="otherMonthlyPayment">Installment payments for the rest of the months in an year</param>
-        /// <param name="totalPremium">Total Annual Premium</param>
-        public CustomerModel(Customer customer, decimal creditCharge, decimal initialPayment, decimal otherMonthlyPayment, decimal totalPremium)
+        public CustomerModel(Customer customer)
         {
             Customer = customer;
-            CreditCharge = creditCharge;
-            InitialPayment = initialPayment;
-            OtherMonthlyPayment = otherMonthlyPayment;
-            TotalPremium = totalPremium;
+            SetCreditChargeRate(5);
+        }
+        #endregion
+        #region Methods
+        /// <summary>
+        /// Method to set the Credit charge rate, if other than defaul value which is 5
+        /// </summary>
+        /// <param name="rate">Credit charge rate (default is 5)</param>
+        public void SetCreditChargeRate(int rate)
+        {
+            CreditChargeRate = rate;
+            SetCreditCharge(rate);
+        }
+        /// <summary>
+        /// Calculating Credit charge and setting CreditCharge.
+        /// </summary>
+        /// <param name="creditCharge">decimal</param>
+        void SetCreditCharge(decimal creditCharge)
+        {
+            CreditCharge = Math.Round(Customer.AnnualPremium * CreditChargeRate / 100, 2); ;
+        }
+        /// <summary>
+        /// Gets Total Premium
+        /// </summary>
+        /// <returns></returns>
+        decimal GetTotalPremium()
+        {
+            return Math.Round(Customer.AnnualPremium + CreditCharge, 2);
+        }
+        /// <summary>
+        /// Gets Monthly installments
+        /// </summary>
+        /// <returns>Tuple, First item in Tuple is Initial payment and the Second ine is all other payments</returns>
+        Tuple<decimal, decimal> GetMonthlypayments()
+        {
+            var avgMonthlyPayment = Math.Round((TotalPremium / 12), 2);
+            var monthlyPayment = TotalPremium - (11 * avgMonthlyPayment);
+            if (monthlyPayment >= avgMonthlyPayment)
+                return new Tuple<decimal, decimal>(monthlyPayment, avgMonthlyPayment);
+            else
+                return new Tuple<decimal, decimal>(avgMonthlyPayment, monthlyPayment);
         }
         #endregion
     }
