@@ -53,7 +53,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
             }
         }
         /// <summary>
-        /// Searech and replaces the values in the temlate for individual customer
+        /// Search and replace the values in the temlate for individual customer
         /// </summary>
         /// <param name="customerModel"></param>
         /// <param name="content"></param>
@@ -81,7 +81,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
                     };
                     return re.Replace(content, match => { return replacements.ContainsKey(match.Groups[1].Value) ? replacements[match.Groups[1].Value] : match.Value; });
                 });
-                //task.Wait();
+                
                 return task.Result;
             }
             catch (Exception e)

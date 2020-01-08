@@ -50,13 +50,13 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         {
             try
             {
-                var tokenSource = new CancellationTokenSource();
-                var token = tokenSource.Token;
                 int success = 0;
                 using (var reader = new StreamReader(inputPath))
                 using (var csvReader = new CsvReader(reader))
                 {
+                    //Fetching customer records
                     var customers = csvReader.GetRecords<Customer>();
+                    //Generating letter for each customer
                     Parallel.ForEach(customers, (customer) =>
                     {
                         try
@@ -69,6 +69,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                                 var _outputPath = $"{outputPath}\\{customerModel.Customer.ID}_{customerModel.Customer.FirstName}.txt";
                                 if (!File.Exists(_outputPath))
                                 {
+                                    //Creating message using template and storing. Return true if succeeded else false
                                     if (_renewalMessageGenerator.CreateRenewalMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
                                     {
                                         success++;
@@ -83,11 +84,10 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                         }
                         catch (Exception e)
                         {
-                            _logger.LogError($"Errorn in customer service: {e.Message}");
+                            _logger.LogError($"Error in customer service: {e.Message}");
                         }
                     });
                 }
-
                 return $"{success} renewal letter generated...";
             }
             catch (Exception e)
