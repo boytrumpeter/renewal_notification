@@ -89,7 +89,7 @@ namespace RoyalUKInsurance.Renewal.Tests
             var result = renewalService.GenerateRenewalMessage(InputPath, OutputPath, TemplatePath);
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
-            Assert.AreEqual("0 renewal letter generated...", result);
+            Assert.AreEqual("0 renewal letter generated.", result);
         }
         [TestMethod]
         public void FetchCSVWithMissingData_Test()

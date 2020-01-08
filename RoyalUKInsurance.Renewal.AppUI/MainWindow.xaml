@@ -17,6 +17,6 @@
         <Label x:Name="lblDefaultOutputPath" Content="(Default Output Path Location)" HorizontalAlignment="Left" Margin="46,143,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lblDefaultInputPath" Content="(Default Input Path Location)" HorizontalAlignment="Left" Margin="46,226,0,0" VerticalAlignment="Top"/>
         <Button x:Name="btnSubmit" Content="Generate Letters" HorizontalAlignment="Left" Margin="240,272,0,0" VerticalAlignment="Top" Width="313" Click="btnSubmit_Click" IsEnabled="False"/>
-        <Label x:Name="lblResult" Content="" HorizontalAlignment="Left" Margin="58,310,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lblResult" Content="" HorizontalAlignment="Left" Margin="58,310,0,0" VerticalAlignment="Top" Foreground="#FF12BB1A"/>
     </Grid>
 </Window>

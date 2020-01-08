@@ -56,6 +56,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         {
 
             int success = 0;
+            int unsuccess = 0;
             //Fetching customer records
             var customers = _customerRepository.GetCustomers(inputPath);
             //Generating letter for each customer
@@ -71,12 +72,17 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                         var _outputPath = $"{outputPath}\\{customerModel.Customer.ID}_{customerModel.Customer.FirstName}.txt";
                         if (!File.Exists(_outputPath))
                         {
-                                    //Creating message using template and storing. Return true if succeeded else false
-                                    if (_renewalMessageGenerator.BuildMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
+                            //Creating message using template and storing. Return true if succeeded else false
+                            if (_renewalMessageGenerator.BuildMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
                             {
                                 success++;
                                 _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer message generated.");
                             }
+                        }
+                        else
+                        {
+                            unsuccess++;
+                            _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer Files already exists.");
                         }
                     }
                     else
@@ -89,8 +95,10 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                     _logger.LogError($"Error in customer service: {e.Message}");
                 }
             });
-
-            return $"{success} renewal letter generated...";
+            if (unsuccess == 0)
+                return $"{success} renewal letter generated.";
+            else
+                return $"{success} renewal letter generated. {unsuccess} files already exists.";
         }
         #endregion
     }
