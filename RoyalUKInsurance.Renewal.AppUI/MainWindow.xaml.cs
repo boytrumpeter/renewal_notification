@@ -57,7 +57,7 @@ namespace RoyalUKInsurance.Renewal.AppUI
         {
             try
             {
-
+                lblResult.Content = "";
                 OpenFileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.InitialDirectory = $"{GetApplicationRoot()}\\Data";
                 openFileDialog.FileName = "Customer.csv";

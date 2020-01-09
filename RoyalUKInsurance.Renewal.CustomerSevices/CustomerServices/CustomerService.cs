@@ -20,7 +20,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         private readonly ILogger<CustomerService> _logger;
         private readonly ICustomerRepository _customerRepository;
         private readonly CustomerValidator _customerValidator;
-        private readonly MessageBuilder _renewalMessageGenerator;
+        private readonly MessageBuilder _messageBuilder;
         #endregion
         #region Constructors
         /// <summary>
@@ -36,12 +36,11 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         /// Internal Constructor (We can use factory pattern here )
         /// </summary>
         /// <param name="customerValidator"> Customer Validator</param>
-        /// <param name="paymentsCalculator">Payments Calculator</param>
-        /// <param name="renewalMessageGenerator">RenewalMessageGenerator</param>
-        internal CustomerService(CustomerValidator customerValidator, MessageBuilder renewalMessageGenerator)
+        /// <param name="messageBuilder">RenewalMessageGenerator</param>
+        internal CustomerService(CustomerValidator customerValidator, MessageBuilder messageBuilder)
         {
             _customerValidator = customerValidator;
-            _renewalMessageGenerator = renewalMessageGenerator;
+            _messageBuilder = messageBuilder;
         }
         #endregion
         #region Methods
@@ -73,7 +72,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                         if (!File.Exists(_outputPath))
                         {
                             //Creating message using template and storing. Return true if succeeded else false
-                            if (_renewalMessageGenerator.BuildMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
+                            if (_messageBuilder.BuildMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
                             {
                                 success++;
                                 _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer message generated.");

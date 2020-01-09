@@ -1,8 +1,6 @@
 ﻿using RoyalUKInsurance.Renewal.CustomerSevices.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -23,7 +21,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
             try
             {
                 var templateData = Utilities.ReadFile(templatePath);
-                var message = SearchAndReplace(customerModel, templateData);
+                var message = SearchAndReplace(customerModel, templateData).Result;
                 if (message == err)
                     return false;
                 Utilities.WriteToFile(message, outputPath);
@@ -42,7 +40,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
         /// <param name="customerModel"></param>
         /// <param name="content"></param>
         /// <returns>Task<string> contents are replaced with data</returns>
-        string SearchAndReplace(CustomerModel customerModel, string content)
+        Task<string> SearchAndReplace(CustomerModel customerModel, string content)
         {
             try
             {
@@ -56,21 +54,21 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
                         ["name"] = customerModel.Customer.FirstName,
                         ["surname"] = customerModel.Customer.Surname,
                         ["ProductName"] = customerModel.Customer.ProductName,
-                        ["PayoutAmount"] = customerModel.Customer.PayoutAmount.ToString(),
-                        ["AnnualPremium"] = customerModel.Customer.AnnualPremium.ToString(),
-                        ["CreditCharge"] = customerModel.CreditCharge.ToString(),
-                        ["TotalAnnualPremium"] = customerModel.TotalPremium.ToString(),
-                        ["InitialMonthlyPaymentAmount"] = customerModel.InitialPayment.ToString(),
-                        ["OtherMonthlyPaymentsAmounteach"] = customerModel.OtherMonthlyPayment.ToString(),
+                        ["PayoutAmount"] = $"{customerModel.Customer.PayoutAmount.ToString():N}",
+                        ["AnnualPremium"] = $"{customerModel.Customer.AnnualPremium:N}",
+                        ["CreditCharge"] = $"{customerModel.CreditCharge:N}",
+                        ["TotalAnnualPremium"] = $"{customerModel.TotalPremium:N}",
+                        ["InitialMonthlyPaymentAmount"] = $"{customerModel.InitialPayment:N}",
+                        ["OtherMonthlyPaymentsAmounteach"] = $"{customerModel.OtherMonthlyPayment:N}",
                     };
                     return re.Replace(content, match => { return replacements.ContainsKey(match.Groups[1].Value) ? replacements[match.Groups[1].Value] : match.Value; });
                 });
                 task.Wait();
-                return task.Result;
+                return task;
             }
             catch (Exception e)
             {
-                return err;
+                return Task.Run(()=>err);
             }
 
         }

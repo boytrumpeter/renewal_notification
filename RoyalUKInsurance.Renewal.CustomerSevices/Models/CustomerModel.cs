@@ -1,5 +1,6 @@
 ﻿using RoyalUKInsurance.Renewal.Data.Models;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,7 +12,6 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.Models
     public class CustomerModel
     {
         #region Properties
-        //public readonly Customer Customer;
         public decimal CreditCharge { get; private set; }
         public decimal InitialPayment { get { return GetMonthlypayments().Item1; } }
         public decimal OtherMonthlyPayment { get { return GetMonthlypayments().Item2; } }
@@ -19,12 +19,18 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.Models
         public int CreditChargeRate { get; private set; }
         public Customer Customer { get; }
         #endregion
-        #region Constructor
+        #region Constructors
         public CustomerModel(Customer customer)
         {
             Customer = customer;
             //Default Credit card charge
             SetCreditChargeRate(5);
+        }
+        public CustomerModel(Customer customer, int creditCardRate)
+        {
+            Customer = customer;
+            //Default Credit card charge
+            SetCreditChargeRate(creditCardRate);
         }
         #endregion
         #region Methods
