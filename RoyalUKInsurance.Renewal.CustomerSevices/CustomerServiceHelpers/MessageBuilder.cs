@@ -54,7 +54,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
                         ["name"] = customerModel.Customer.FirstName,
                         ["surname"] = customerModel.Customer.Surname,
                         ["ProductName"] = customerModel.Customer.ProductName,
-                        ["PayoutAmount"] = $"{customerModel.Customer.PayoutAmount.ToString():N}",
+                        ["PayoutAmount"] = $"{customerModel.Customer.PayoutAmount:N}",
                         ["AnnualPremium"] = $"{customerModel.Customer.AnnualPremium:N}",
                         ["CreditCharge"] = $"{customerModel.CreditCharge:N}",
                         ["TotalAnnualPremium"] = $"{customerModel.TotalPremium:N}",
