@@ -1,6 +1,8 @@
 ﻿using RoyalUKInsurance.Renewal.CustomerSevices.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -16,15 +18,15 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServiceHelpers
         /// <param name="outputPath">outputPath</param>
         /// <param name="templatePath">templatePath</param>
         /// <returns></returns>
-        internal bool BuildMessage(CustomerModel customerModel, string outputPath, string templatePath)
+        internal bool BuildMessage(CustomerModel customerModel, string outputPath, string templateData)
         {
             try
             {
-                var templateData = Utilities.ReadFile(templatePath);
+                //var templateData = Utilities.ReadFile(templatePath);
                 var message = SearchAndReplace(customerModel, templateData).Result;
                 if (message == err)
                     return false;
-                Utilities.WriteToFile(message, outputPath);
+                File.WriteAllText(outputPath, message, Encoding.GetEncoding("iso-8859-1"));
                 return true;
             }
             catch (Exception)

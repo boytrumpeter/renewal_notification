@@ -105,7 +105,7 @@ namespace RoyalUKInsurance.Renewal.Tests
         [TestMethod]
         public void BulkData_Test()
         {
-            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\BulkData.csv";
+            InputPath = $"{Directory.GetCurrentDirectory()}\\TestData\\BulkData1.csv";
             MockCustomerRepository.Setup(a => a.GetCustomers(It.IsAny<string>()))
                 .Returns(GetCustomers(InputPath));
             var renewalService = new RenewalMessageService(new CustomerService(MockCustomerRepository.Object,new NullLogger<CustomerService>()), new NullLogger<RenewalMessageService>());

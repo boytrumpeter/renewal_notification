@@ -11,10 +11,11 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.Models
     /// </summary>
     public class CustomerModel
     {
+        private Tuple<decimal,decimal> _monthlypayments;
         #region Properties
         public decimal CreditCharge { get; private set; }
-        public decimal InitialPayment { get { return GetMonthlypayments().Item1; } }
-        public decimal OtherMonthlyPayment { get { return GetMonthlypayments().Item2; } }
+        public decimal InitialPayment { get { return (_monthlypayments??(_monthlypayments=GetMonthlypayments())).Item1; } }
+        public decimal OtherMonthlyPayment { get { return (_monthlypayments ?? (_monthlypayments = GetMonthlypayments())).Item2; } }
         public decimal TotalPremium { get { return GetTotalPremium(); } }
         public int CreditChargeRate { get; private set; }
         public Customer Customer { get; }

@@ -45,7 +45,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
         #endregion
         #region Methods
         /// <summary>
-        /// Message to generate message and store file
+        /// Method to generate message and store file
         /// </summary>
         /// <param name="inputPath">Input path</param>
         /// <param name="outputPath">output path</param>
@@ -58,6 +58,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
             int unsuccess = 0;
             //Fetching customer records
             var customers = _customerRepository.GetCustomers(inputPath);
+            var templateData = File.ReadAllText(templatePath, Encoding.GetEncoding("iso-8859-1"));
             //Generating letter for each customer
             Parallel.ForEach(customers, (customer) =>
             {
@@ -72,7 +73,7 @@ namespace RoyalUKInsurance.Renewal.CustomerSevices.CustomerServices
                         if (!File.Exists(_outputPath))
                         {
                             //Creating message using template and storing. Return true if succeeded else false
-                            if (_messageBuilder.BuildMessage(customerModel: customerModel, outputPath: _outputPath, templatePath: templatePath))
+                            if (_messageBuilder.BuildMessage(customerModel: customerModel, outputPath: _outputPath, templateData: templateData))
                             {
                                 success++;
                                 _logger.LogInformation($"{customer.FirstName} {customer.Surname} Customer message generated.");
